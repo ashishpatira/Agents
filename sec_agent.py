@@ -1,4 +1,3 @@
-import os
 import requests
 
 # A list of companies and their CIKs
