@@ -1,7 +1,7 @@
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
-from sec_agent import get_10k_filing_urls_async
+from sec_agent import get_10k_filing_urls_async, SEC_USER_AGENT
 
 # In a real implementation, you would import the necessary library
 # import google.generativeai as genai
@@ -29,7 +29,7 @@ async def fetch_and_summarize(session, company, url):
     """
     print(f"Fetching filing for {company}...")
     try:
-        headers = {"User-Agent": "test@test.com"}
+        headers = {"User-Agent": SEC_USER_AGENT}
         async with session.get(url, headers=headers) as response:
             response.raise_for_status()
             content = await response.read()

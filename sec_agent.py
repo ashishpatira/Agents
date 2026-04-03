@@ -3,6 +3,9 @@ import asyncio
 import aiohttp
 import requests
 
+# SEC EDGAR requires a User-Agent header in the format: <Company Name> <Admin Contact Email>
+SEC_USER_AGENT = "SEC Filing Agent admin@example.com"
+
 # A list of companies and their CIKs
 COMPANIES = {
     "Microsoft": "0000789019",
@@ -22,7 +25,7 @@ def get_10k_filing_urls():
     Fetches the 10-K filings for the companies in the COMPANIES list and returns a dictionary of company names to filing URLs.
     Synchronous version using requests.
     """
-    headers = {"User-Agent": "test@test.com"}
+    headers = {"User-Agent": SEC_USER_AGENT}
     filing_urls = {}
 
     for company, cik in COMPANIES.items():
@@ -82,7 +85,7 @@ async def get_10k_filing_urls_async():
     Fetches the 10-K filings for the companies in the COMPANIES list asynchronously.
     Returns a dictionary of company names to filing URLs.
     """
-    headers = {"User-Agent": "test@test.com"}
+    headers = {"User-Agent": SEC_USER_AGENT}
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_filing_url(session, company, cik, headers) for company, cik in COMPANIES.items()]
         results = await asyncio.gather(*tasks)
