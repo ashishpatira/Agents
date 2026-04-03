@@ -35,11 +35,10 @@ def get_10k_filing_urls():
 
             # Find the latest 10-K filing
             filings = response.json()
+            recent = filings['filings']['recent']
             found = False
-            for i in range(len(filings['filings']['recent']['accessionNumber'])):
-                if filings['filings']['recent']['form'][i] == '10-K':
-                    accession_number = filings['filings']['recent']['accessionNumber'][i]
-
+            for form, accession_number in zip(recent['form'], recent['accessionNumber']):
+                if form == '10-K':
                     # Construct the URL for the filing
                     accession_number_no_dashes = accession_number.replace('-', '')
                     filing_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_number_no_dashes}/{accession_number}.txt"
@@ -64,10 +63,10 @@ async def fetch_filing_url(session, company, cik, headers):
         async with session.get(url, headers=headers) as response:
             response.raise_for_status()
             filings = await response.json()
+            recent = filings['filings']['recent']
 
-            for i in range(len(filings['filings']['recent']['accessionNumber'])):
-                if filings['filings']['recent']['form'][i] == '10-K':
-                    accession_number = filings['filings']['recent']['accessionNumber'][i]
+            for form, accession_number in zip(recent['form'], recent['accessionNumber']):
+                if form == '10-K':
                     accession_number_no_dashes = accession_number.replace('-', '')
                     filing_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_number_no_dashes}/{accession_number}.txt"
                     return company, filing_url
