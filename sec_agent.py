@@ -17,6 +17,13 @@ COMPANIES = {
     "Visa": "0001403161",
 }
 
+def construct_filing_url(cik, accession_number):
+    """
+    Constructs the URL for an SEC filing.
+    """
+    accession_number_no_dashes = accession_number.replace('-', '')
+    return f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_number_no_dashes}/{accession_number}.txt"
+
 def get_10k_filing_urls():
     """
     Fetches the 10-K filings for the companies in the COMPANIES list and returns a dictionary of company names to filing URLs.
@@ -41,8 +48,7 @@ def get_10k_filing_urls():
                     accession_number = filings['filings']['recent']['accessionNumber'][i]
 
                     # Construct the URL for the filing
-                    accession_number_no_dashes = accession_number.replace('-', '')
-                    filing_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_number_no_dashes}/{accession_number}.txt"
+                    filing_url = construct_filing_url(cik, accession_number)
                     filing_urls[company] = filing_url
                     found = True
                     break
@@ -68,8 +74,7 @@ async def fetch_filing_url(session, company, cik, headers):
             for i in range(len(filings['filings']['recent']['accessionNumber'])):
                 if filings['filings']['recent']['form'][i] == '10-K':
                     accession_number = filings['filings']['recent']['accessionNumber'][i]
-                    accession_number_no_dashes = accession_number.replace('-', '')
-                    filing_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession_number_no_dashes}/{accession_number}.txt"
+                    filing_url = construct_filing_url(cik, accession_number)
                     return company, filing_url
             print(f"No 10-K found for {company}")
             return company, None
